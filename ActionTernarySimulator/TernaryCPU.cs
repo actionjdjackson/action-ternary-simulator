@@ -5,7 +5,7 @@ namespace ActionTernarySimulator
     {
 
         private static int PROCESSOR_WIDTH_IN_TRITS = 27;
-        private static int N_GEN_PUR_REGISTERS = 3;
+        private static int N_GEN_PUR_REGISTERS = 9;
         private static int N_ADDRESS_REGISTERS = 3;
         private static int N_DATA_REGISTERS = 3;
         private static int N_CONTROL_REGISTERS = 3;
@@ -60,6 +60,11 @@ namespace ActionTernarySimulator
             }
         }
 
+        public void Cycle()
+        {
+
+        }
+
         public static TernaryIntGeneric PowerTernaryInts(TernaryIntGeneric int1, TernaryIntGeneric int2)
         {
             var zero = new TernaryIntGeneric(0);
@@ -109,7 +114,6 @@ namespace ActionTernarySimulator
                         if (ComparisonOperator(rem, divsr) == '-')
                         {
                             finalQuotient = quot;
-                            //Console.WriteLine($"Quotient: {quot.integerValue} Remainder: {rem.integerValue}");
                             break;
                         }
                     }
@@ -165,7 +169,6 @@ namespace ActionTernarySimulator
                         if (ComparisonOperator(rem, divsr) == '-')
                         {
                             finalModulus = rem;
-                            //Console.WriteLine($"Quotient: {quot.integerValue} Remainder: {rem.integerValue}");
                             break;
                         }
                     }
@@ -180,11 +183,11 @@ namespace ActionTernarySimulator
                 }
                 else if (dividend.integerPartTernaryValue == divisor.integerPartTernaryValue)
                 {
-                    return new TernaryIntGeneric(1);
+                    return new TernaryIntGeneric(0);
                 }
                 else
                 {
-                    return new TernaryIntGeneric(0);
+                    return dividend;
                 }
             }
             else
@@ -192,6 +195,13 @@ namespace ActionTernarySimulator
                 Console.WriteLine("TERNARY INTEGER TOO LONG FOR PROCESSOR WIDTH");
                 return null;
             }
+        }
+
+        public static TernaryIntGeneric NegativeAbsoluteValue(TernaryIntGeneric int1)
+        {
+            var temp = AbsoluteValue(int1);
+            temp.Invert();
+            return temp;
         }
 
         public static TernaryIntGeneric AbsoluteValue(TernaryIntGeneric int1)
@@ -345,7 +355,7 @@ namespace ActionTernarySimulator
         {
             var temp1 = int1.integerPartTernaryValue.ToCharArray();
             var temp2 = int2.integerPartTernaryValue.ToCharArray();
-            char[] temp3 = CreateEmptyTernaryValue(int1.integerPartTernaryValue.Length).ToCharArray();
+            char[] temp3 = CreateEmptyTernaryValue(temp1.Length).ToCharArray();
             int fullLength = int1.fullTernaryValue.Length;
             if (fullLength <= PROCESSOR_WIDTH_IN_TRITS)
             {

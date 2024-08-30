@@ -26,7 +26,7 @@ namespace ActionTernarySimulator
         public static int TotalNTrits { get => totalNTrits; set => totalNTrits = value; }
         public static int NTypeTrits { get => nTypeTrits; set => nTypeTrits = value; }
         public static int NIntegerTrits { get => nIntegerTrits; set => nIntegerTrits = value; }
-        private static int nIntegerTrits = 0;
+        private static int nIntegerTrits;
         private static int totalNTrits;
         private static int nTypeTrits;
 
@@ -42,7 +42,7 @@ namespace ActionTernarySimulator
         {
             this.integerPartTernaryValue = ternaryString;
             this.integerValue = ConvertBalancedTernaryStringToInt(this.integerPartTernaryValue);
-            this.typeCodeTernary = ConvertTypeCodeToTernaryString(typeCode,  nTypeTrits);
+            this.typeCodeTernary = ConvertTypeCodeToTernaryString(typeCode, nTypeTrits);
             this.fullTernaryValue = typeCodeTernary + integerPartTernaryValue;
         }
 
