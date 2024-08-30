@@ -30,6 +30,8 @@ namespace ActionTernarySimulator
                 Console.WriteLine("5 + 7 = " + num3.integerValue);
                 Console.WriteLine(num1.integerPartTernaryValue + " + " + num2.integerPartTernaryValue + " = " + num3.integerPartTernaryValue);
 
+                Console.WriteLine("7 <=> 7 = " + TernaryCPU.ComparisonOperator(num2, num2));
+
                 var num4 = new TernaryIntGeneric(128);
                 var num5 = new TernaryIntGeneric(72);
                 var num6 = TernaryCPU.SubtractTernaryInts(num4, num5);

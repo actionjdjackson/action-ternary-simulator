@@ -56,6 +56,7 @@ namespace ActionTernarySimulator
         public void Invert()
         {
             this.integerPartTernaryValue = InvertBalancedTernaryString(this.integerPartTernaryValue);
+            this.integerValue = -this.integerValue;
         }
 
         public static string InvertBalancedTernaryString(string ternaryString)

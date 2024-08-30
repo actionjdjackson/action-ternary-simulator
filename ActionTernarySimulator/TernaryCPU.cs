@@ -196,30 +196,49 @@ namespace ActionTernarySimulator
 
         public static TernaryIntGeneric AbsoluteValue(TernaryIntGeneric int1)
         {
-            if (int1.integerValue < 0)
+            var arr1 = int1.integerPartTernaryValue.ToCharArray();
+            for (int i = 0; i < arr1.Length; i++)
             {
-                return new TernaryIntGeneric(TernaryIntGeneric.InvertBalancedTernaryString(int1.integerPartTernaryValue));
+                if (arr1[i] == '-')
+                {
+                    return new TernaryIntGeneric(TernaryIntGeneric.InvertBalancedTernaryString(int1.integerPartTernaryValue));
+                }
+                else if (arr1[i] == '+')
+                {
+                    return int1;
+                }
             }
-            else
-            {
-                return int1;
-            }
+            return int1;
         }
 
         public static char ComparisonOperator(TernaryIntGeneric int1, TernaryIntGeneric int2)
         {
-            if (int1.integerValue < int2.integerValue)
+            var arr1 = int1.integerPartTernaryValue.ToCharArray();
+            var arr2 = int2.integerPartTernaryValue.ToCharArray();
+
+            for (int i = 0; i < arr1.Length; i++)
             {
-                return '-';
+                if (arr1[i] != arr2[i])
+                {
+                    if (arr1[i] == '+')
+                    {
+                        return '+';
+                    }
+                    else if (arr2[i] == '+')
+                    {
+                        return '-';
+                    }
+                    else if (arr1[i] == '-')
+                    {
+                        return '-';
+                    }
+                    else if (arr2[i] == '-')
+                    {
+                        return '+';
+                    }
+                }
             }
-            else if (int1.integerValue > int2.integerValue)
-            {
-                return '+';
-            }
-            else
-            {
-                return '0';
-            }
+            return '0';
         }
 
         public static TernaryIntGeneric MultiplyTernaryInts(TernaryIntGeneric int1, TernaryIntGeneric int2)
