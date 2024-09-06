@@ -27,7 +27,7 @@ namespace ActionTernarySimulator
 
                 TernaryAssembly assembly = new TernaryAssembly();
 
-                var memsys = new TernaryMemorySystem("/Users/jacobjackson/Documents/Code/Ternary/ActionTernarySimulator/ActionTernarySimulator/test.trom");
+                var memsys = new TernaryMemorySystem("../../../test.trom");
                 var iosys = new TernaryIOSystem();
                 var cpu = new TernaryCPU(memsys, iosys);
 

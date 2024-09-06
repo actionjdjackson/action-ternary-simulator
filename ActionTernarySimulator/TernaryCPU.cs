@@ -528,6 +528,19 @@ namespace ActionTernarySimulator
                     freg2.ChangeValue(this.iosys.IORead(datareg as TernaryIntGeneric).FullTernaryString);
                     break;
 
+                case -9300: //character operations
+                    this.iosys.IOTtyWrite(new TernaryChar(reg1.FullTernaryString));
+                    break;
+                case -9299:
+                    this.iosys.IOTtyWrite(new TernaryChar(reg2.FullTernaryString));
+                    break;
+                case -9298:
+                    reg1.ChangeValue(this.iosys.IOTtyRead().FullTernaryString);
+                    break;
+                case -9297:
+                    reg2.ChangeValue(this.iosys.IOTtyRead().FullTernaryString);
+                    break;
+
 
                     //            case "fopwri1" -9460: //fast output ports (FOPs)
                     //case "fopset1" -9459:

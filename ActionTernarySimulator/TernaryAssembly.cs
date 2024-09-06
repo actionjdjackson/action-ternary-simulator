@@ -138,6 +138,11 @@ namespace ActionTernarySimulator
 				new TerInst( new string[] {"iofread1", "IOfread1"}, -9394),
 				new TerInst( new string[] {"iofread2", "IOfread2"}, -9393),
 
+				new TerInst( new string[] {"consolewrite1", "ttywrite1", "writechar1"}, -9300),
+				new TerInst( new string[] {"consolewrite2", "ttywrite2", "writechar2"}, -9299),
+				new TerInst( new string[] {"consoleread1", "ttyread1", "readchar1"}, -9298),
+				new TerInst( new string[] {"consoleread2", "ttyread2", "readchar2"}, -9297),
+
 				//stackbank("s1", -9100),
 				//stackbank("s2", -9101),
 				//stackbank("s3", -9102),

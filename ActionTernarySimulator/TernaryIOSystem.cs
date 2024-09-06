@@ -54,5 +54,10 @@ namespace ActionTernarySimulator
             Console.Write(ternaryChar.character);
         }
 
+        public TernaryChar IOTtyRead()
+        {
+            return new TernaryChar((char)Console.Read());
+        }
+
     }
 }
