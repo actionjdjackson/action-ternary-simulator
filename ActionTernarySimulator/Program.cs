@@ -20,46 +20,48 @@ namespace ActionTernarySimulator
             var mainInput = Console.ReadLine();
             if (mainInput == "t" || mainInput == "T")
             {
-                TernaryIntGeneric.SetUpTernaryImplementation(27, 0);
 
-                var cpu = new TernaryCPU();
+                TernaryIntGeneric.SetUpTernaryImplementation(TernaryCPU.PROCESSOR_WIDTH_IN_TRITS, 0);
+                TernaryChar.SetUpTernaryImplementation(TernaryCPU.PROCESSOR_WIDTH_IN_TRITS);
+                TernaryFloatGeneric.SetUpTernaryImplementation(19, 5, true, 2);
 
-                var num1 = new TernaryIntGeneric(5);
-                var num2 = new TernaryIntGeneric(7);
-                var num3 = TernaryCPU.AddTernaryInts(num1, num2);
-                Console.WriteLine("5 + 7 = " + num3.integerValue);
-                Console.WriteLine(num1.integerPartTernaryValue + " + " + num2.integerPartTernaryValue + " = " + num3.integerPartTernaryValue);
+                TernaryAssembly assembly = new TernaryAssembly();
 
-                Console.WriteLine("7 <=> 7 = " + TernaryCPU.ComparisonOperator(num2, num2));
+                var memsys = new TernaryMemorySystem("/Users/jacobjackson/Documents/Code/Ternary/ActionTernarySimulator/ActionTernarySimulator/test.trom");
+                var iosys = new TernaryIOSystem();
+                var cpu = new TernaryCPU(memsys, iosys);
 
-                var num4 = new TernaryIntGeneric(128);
-                var num5 = new TernaryIntGeneric(72);
-                var num6 = TernaryCPU.SubtractTernaryInts(num4, num5);
-                Console.WriteLine("128 - 72 = " + num6.integerValue);
-                Console.WriteLine(num4.integerPartTernaryValue + " - " + num5.integerPartTernaryValue + " = " + num6.integerPartTernaryValue);
+                var status = new TernaryIntGeneric(0);
+                var startTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                var clcnt = 1;
+                var targspeed = 6.5; //approx. speed in KHz
+                var targtime = 1 / (targspeed);
 
-                var num7 = new TernaryIntGeneric(54);
-                Console.WriteLine(num7.integerPartTernaryValue + " shifted left by one is " + TernaryCPU.TritShiftLeft(num7.integerPartTernaryValue, 1));
-                var num8 = new TernaryIntGeneric(123456);
-                Console.WriteLine(num8.integerPartTernaryValue + " shifted right by one is " + TernaryCPU.TritShiftRight(num8.integerPartTernaryValue, 1));
+                while (status.integerValue == 0)
+                {
+                    status = cpu.Cycle();
+                    clcnt++;
+                    var xtime = (startTime + (clcnt - 1) * targtime) - DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                    if (xtime > 0.0)
+                    {
+                        System.Threading.Thread.Sleep((int)xtime);
+                    }
+                }
+                Console.WriteLine("TernaryCPU Stopped With Status Code: " + status.integerValue);
 
-                var num9 = TernaryCPU.MultiplyTernaryInts(num1, num2);
-                Console.WriteLine("5 * 7 = " + num9.integerValue);
+                Console.WriteLine($"Approx. Speed: {(float)(clcnt) / (DateTimeOffset.Now.ToUnixTimeMilliseconds() - startTime)}" + " KHz");
 
-                var num10 = TernaryCPU.DivideTernaryInts(new TernaryIntGeneric(10), new TernaryIntGeneric(5));
-                Console.WriteLine("10 / 5 = " + num10.integerValue);
-                var num11 = TernaryCPU.DivideTernaryInts(new TernaryIntGeneric(280), new TernaryIntGeneric(80));
-                Console.WriteLine("280 / 80 = " + num11.integerValue);
-
-                var num12 = TernaryCPU.ModulusTernaryInts(new TernaryIntGeneric(280), new TernaryIntGeneric(80));
-                Console.WriteLine("280 % 80 = " + num12.integerValue);
-                var num13 = TernaryCPU.ModulusTernaryInts(new TernaryIntGeneric(280), new TernaryIntGeneric(-80));
-                Console.WriteLine("280 % -80 = " + num13.integerValue);
-                var num14 = TernaryCPU.ModulusTernaryInts(new TernaryIntGeneric(-280), new TernaryIntGeneric(-80));
-                Console.WriteLine("-280 % -80 = " + num14.integerValue);
-
-                var num15 = TernaryCPU.PowerTernaryInts(new TernaryIntGeneric(3), new TernaryIntGeneric(4));
-                Console.WriteLine("3 ^ 4 = " + num15.integerValue);
+                //Console.WriteLine(TernaryCPU.AddTernaryFloats(new TernaryFloatGeneric(-0.75), new TernaryFloatGeneric(-0.25)).DoubleValue);
+                //Console.WriteLine(TernaryCPU.AddTernaryFloats(new TernaryFloatGeneric(3.75), new TernaryFloatGeneric(1.25)).DoubleValue);
+                //Console.WriteLine(TernaryCPU.AddTernaryFloats(new TernaryFloatGeneric(50), new TernaryFloatGeneric(20)).DoubleValue);
+                //Console.WriteLine(TernaryCPU.AddTernaryFloats(new TernaryFloatGeneric(0.126), new TernaryFloatGeneric(0.125)).DoubleValue);
+                //Console.WriteLine(TernaryCPU.AddTernaryFloats(new TernaryFloatGeneric(200), new TernaryFloatGeneric(-190)).DoubleValue);
+                //Console.WriteLine(TernaryCPU.AddTernaryFloats(new TernaryFloatGeneric(200), new TernaryFloatGeneric(-180)).DoubleValue);
+                //Console.WriteLine(TernaryCPU.AddTernaryFloats(new TernaryFloatGeneric(200), new TernaryFloatGeneric(-170)).DoubleValue);
+                //Console.WriteLine(TernaryCPU.AddTernaryFloats(new TernaryFloatGeneric(-180), new TernaryFloatGeneric(200)).DoubleValue);
+                //Console.WriteLine(TernaryCPU.AddTernaryFloats(new TernaryFloatGeneric(200), new TernaryFloatGeneric(-200.125)).DoubleValue);
+                //Console.WriteLine(TernaryCPU.AddTernaryFloats(new TernaryFloatGeneric(3.14159), new TernaryFloatGeneric(2.7)).DoubleValue);
+                //Console.WriteLine(TernaryCPU.AddTernaryFloats(new TernaryFloatGeneric(2165.3734), new TernaryFloatGeneric(10943.1334)).DoubleValue);
             }
             else if (mainInput == "X" || mainInput == "x")
             {

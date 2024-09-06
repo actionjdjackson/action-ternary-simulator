@@ -2,7 +2,7 @@
 
 namespace ActionTernarySimulator
 {
-    public class TernaryFloatGeneric
+    public class TernaryFloatGeneric : TernaryNumGeneric
     {
 
         // These are the instance variables - which determine the behavior and values of each
@@ -24,9 +24,18 @@ namespace ActionTernarySimulator
         public static int nTypeTrits = 0;
         public static int totalNTrits = 0;
 
+        public static int maxExponentValue;
+        public static int minExponentValue;
         public static double minNormalPosValue;
         public static double maxNormalPosValue;
         public static double minSubnormalPosValue;
+
+        public string Significand { get => significand; set => ChangeValue(value, exponent, signSubnormal, type); }
+        public string Exponent { get => exponent; set => ChangeValue(significand, value, signSubnormal, type); }
+        public string SignSubnormal { get => signSubnormal; set => ChangeValue(significand, exponent, value, type); }
+        public string Type { get => type; set => ChangeValue(significand, exponent, signSubnormal, value); }
+        public string FullTernaryValue { get => fullTernaryValue; set => ChangeValue(value); }
+        public double DoubleValue { get => doubleValue; set => ChangeValue(value); }
 
         //
         public enum TypeCodeEnum
@@ -45,6 +54,7 @@ namespace ActionTernarySimulator
         public TernaryFloatGeneric(string fullTernaryValue)
         {
             this.fullTernaryValue = fullTernaryValue;
+            base.fullTernaryString = fullTernaryValue;
             this.type = fullTernaryValue.Substring(0, nTypeTrits);
             if (signTrit) {
                 this.signSubnormal = fullTernaryValue.Substring(nTypeTrits, 1);
@@ -54,7 +64,28 @@ namespace ActionTernarySimulator
 
             this.doubleValue = TernaryFloatGeneric.ConvertFullFeaturedBTSToDouble(fullTernaryValue);
 
-            Console.WriteLine(doubleValue);
+            //Console.WriteLine(DoubleValue);
+        }
+
+        public void ChangeValue(string fullTernaryValue)
+        {
+            this.fullTernaryValue = fullTernaryValue;
+            base.fullTernaryString = fullTernaryValue;
+            this.type = fullTernaryValue.Substring(0, nTypeTrits);
+            if (signTrit)
+            {
+                this.signSubnormal = fullTernaryValue.Substring(nTypeTrits, 1);
+            }
+            this.exponent = fullTernaryValue.Substring(nTypeTrits + signSubnormal.Length, nExponentTrits);
+            this.significand = fullTernaryValue.Substring(nTypeTrits + signSubnormal.Length + nExponentTrits, nSignificandTrits);
+
+            this.doubleValue = TernaryFloatGeneric.ConvertFullFeaturedBTSToDouble(fullTernaryValue);
+        }
+
+        public override void ChangeValue()
+        {
+            base.ChangeValue();
+            ChangeValue(fullTernaryString);
         }
 
         public static double Normalize(double val, double valmin, double valmax, double min, double max)
@@ -62,43 +93,29 @@ namespace ActionTernarySimulator
             return (((val - valmin) / (valmax - valmin)) * (max - min)) + min;
         }
 
-        public TernaryFloatGeneric(double doubleValue)
+        public void ChangeValue(double doubleValue)
         {
-
             if (Math.Abs(doubleValue) >= minNormalPosValue && Math.Abs(doubleValue) <= maxNormalPosValue)
             {
-                Console.WriteLine("Double Passed Into TernaryFloatGeneric: " + doubleValue);
+                //Console.WriteLine("Double Passed Into TernaryFloatGeneric: " + doubleValue);
 
                 int exponentValueBase3 = (int)Math.Ceiling((Math.Log(Math.Abs(doubleValue)) - Math.Log(1.5)) / Math.Log(3.0));
 
-                this.exponent = TernaryIntGeneric.ConvertIntToBalancedTernaryString(integerValue: exponentValueBase3);
+                this.exponent = TernaryIntGeneric.ConvertIntToBalancedTernaryString(integerValue: exponentValueBase3, nExponentTrits);
 
                 double newSignificand = doubleValue / Math.Pow(3.0, exponentValueBase3);
 
                 (string balTerStr, double remainder) = TernaryFloatGeneric.ConvertDoubleToBTSWithRemainder(newSignificand, TernaryFloatGeneric.nSignificandTrits);
                 this.significand = balTerStr;
 
-                Console.WriteLine(remainder + " remainder after converting from Double to Balanced Ternary");
+                //Console.WriteLine(remainder + " remainder after converting from Double to Balanced Ternary");
 
-                if (nTypeTrits > 0)
-                {
-                    this.type = TernaryIntGeneric.ConvertTypeCodeToTernaryString((TernaryIntGeneric.TypeCodeEnum)TypeCodeEnum.RealNumberInfinitePrecision, nTypeTrits);
-                }
-                else
-                {
-                    this.type = "";
-                }
+                SetUpTypeTrits();
+
                 if (signTrit)
                 {
                     this.signSubnormal = this.significand.ToCharArray()[0].ToString();
                     this.significand = this.significand.Remove(0, 1);
-                }
-                if (type.Length < nTypeTrits)
-                {
-                    for (int n = type.Length; n < nTypeTrits; n++)
-                    {
-                        type = "0" + type;
-                    }
                 }
                 if (exponent.Length < nExponentTrits)
                 {
@@ -109,55 +126,59 @@ namespace ActionTernarySimulator
                 }
                 if (significand.Length < nSignificandTrits)
                 {
-                    Console.WriteLine("Significand Smaller Than Expected");
+                    //Console.WriteLine("Significand Smaller Than Expected");
                 }
 
                 this.fullTernaryValue = this.type + this.signSubnormal + this.exponent + this.significand;
-                Console.WriteLine("Balanced Ternary Value: " + fullTernaryValue);
+                //Console.WriteLine("Balanced Ternary Value: " + fullTernaryValue);
+
+                base.fullTernaryString = fullTernaryValue;
 
                 this.doubleValue = TernaryFloatGeneric.ConvertFullFeaturedBTSToDouble(this.fullTernaryValue);
-                Console.WriteLine("Verify the double is the same converting back: " + this.doubleValue + "\n\n");
+                //Console.WriteLine("Verify the double is the same converting back: " + this.doubleValue + "\n\n");
             }
 
             else if (Math.Abs(doubleValue) < minNormalPosValue && Math.Abs(doubleValue) >= minSubnormalPosValue && signTrit)
 
             {
-                Console.WriteLine("Double passed Into TernaryFloatGeneric: " + doubleValue);
+                //Console.WriteLine("Double passed Into TernaryFloatGeneric: " + doubleValue);
 
                 int exponentValueBase3 = (int)-((Math.Pow(3.0, nExponentTrits) - 1) / 2);
 
-                Console.WriteLine("Value is subnormal, changing to extended significand. Power of 3 remains at " + exponentValueBase3);
+                //Console.WriteLine("Value is subnormal, changing to extended significand. Power of 3 remains at " + exponentValueBase3);
 
                 double newSignificand = doubleValue / Math.Pow(3.0, exponentValueBase3);
 
                 (string balTerStr, double remainder) = TernaryFloatGeneric.ConvertDoubleToBTSWithRemainder(newSignificand, nSignificandTrits + nExponentTrits, startingTrit: 1);
                 this.extendedSignificand = balTerStr;
 
-                Console.WriteLine(remainder + " remainder after converting from Double to Balanced Ternary");
+                //Console.WriteLine(remainder + " remainder after converting from Double to Balanced Ternary");
                 SetUpTypeTrits();
                 if (signTrit)
                 {
                     this.signSubnormal = "0";
                 }
                 this.fullTernaryValue = this.type + this.signSubnormal + this.extendedSignificand;
-                Console.WriteLine("Balanced Ternary Value: " + fullTernaryValue);
+                //Console.WriteLine("Balanced Ternary Value: " + fullTernaryValue);
+
+                base.fullTernaryString = fullTernaryValue;
 
                 this.doubleValue = TernaryFloatGeneric.ConvertFullFeaturedBTSToDouble(this.fullTernaryValue);
-                Console.WriteLine("Verify the double is the same converting back: " + this.doubleValue + "\n\n");
+                //Console.WriteLine("Verify the double is the same converting back: " + this.doubleValue + "\n\n");
             }
-
             else if (doubleValue == 0)
-
             {
                 SetUpTypeTrits();
+
+                this.signSubnormal = "0";
 
                 this.fullTernaryValue = this.type + this.signSubnormal;
                 for (int n = 0; n < nSignificandTrits + nExponentTrits; n++)
                 {
                     this.fullTernaryValue += "0";
                 }
-                Console.WriteLine("Balanced Ternary Value: " + fullTernaryValue);
-                Console.WriteLine("\n");
+
+                base.fullTernaryString = fullTernaryValue;
             }
             else
             {
@@ -177,15 +198,150 @@ namespace ActionTernarySimulator
             }
         }
 
+        public TernaryFloatGeneric(double doubleValue)
+        {
+
+            if (Math.Abs(doubleValue) >= minNormalPosValue && Math.Abs(doubleValue) <= maxNormalPosValue)
+            {
+                //Console.WriteLine("Double Passed Into TernaryFloatGeneric: " + doubleValue);
+
+                int exponentValueBase3 = (int)Math.Ceiling((Math.Log(Math.Abs(doubleValue)) - Math.Log(1.5)) / Math.Log(3.0));
+
+                this.exponent = TernaryIntGeneric.ConvertIntToBalancedTernaryString(integerValue: exponentValueBase3, nExponentTrits);
+
+                double newSignificand = doubleValue / Math.Pow(3.0, exponentValueBase3);
+
+                (string balTerStr, double remainder) = TernaryFloatGeneric.ConvertDoubleToBTSWithRemainder(newSignificand, TernaryFloatGeneric.nSignificandTrits);
+                this.significand = balTerStr;
+
+                //Console.WriteLine(remainder + " remainder after converting from Double to Balanced Ternary");
+
+                SetUpTypeTrits();
+
+                if (signTrit)
+                {
+                    this.signSubnormal = this.significand.ToCharArray()[0].ToString();
+                    this.significand = this.significand.Remove(0, 1);
+                }
+
+                if (significand.Length < nSignificandTrits)
+                {
+                    //Console.WriteLine("Significand Smaller Than Expected");
+                }
+
+                this.fullTernaryValue = this.type + this.signSubnormal + this.exponent + this.significand;
+                //Console.WriteLine("Balanced Ternary Value: " + fullTernaryValue);
+
+                base.fullTernaryString = fullTernaryValue;
+
+                this.doubleValue = TernaryFloatGeneric.ConvertFullFeaturedBTSToDouble(this.fullTernaryValue);
+                //Console.WriteLine("Verify the double is the same converting back: " + this.DoubleValue + "\n\n");
+            }
+
+            else if (Math.Abs(doubleValue) < minNormalPosValue && Math.Abs(doubleValue) >= minSubnormalPosValue && signTrit)
+
+            {
+                //Console.WriteLine("Double passed Into TernaryFloatGeneric: " + doubleValue);
+
+                int exponentValueBase3 = (int)-((Math.Pow(3.0, nExponentTrits) - 1) / 2);
+
+                //Console.WriteLine("Value is subnormal, changing to extended significand. Power of 3 remains at " + exponentValueBase3);
+
+                double newSignificand = doubleValue / Math.Pow(3.0, exponentValueBase3);
+
+                (string balTerStr, double remainder) = TernaryFloatGeneric.ConvertDoubleToBTSWithRemainder(newSignificand, nSignificandTrits + nExponentTrits, startingTrit: 1);
+                this.extendedSignificand = balTerStr;
+
+                //Console.WriteLine(remainder + " remainder after converting from Double to Balanced Ternary");
+                SetUpTypeTrits();
+                if (signTrit)
+                {
+                    this.signSubnormal = "0";
+                }
+                this.fullTernaryValue = this.type + this.signSubnormal + this.extendedSignificand;
+                //Console.WriteLine("Balanced Ternary Value: " + fullTernaryValue);
+
+                base.fullTernaryString = fullTernaryValue;
+
+                this.doubleValue = TernaryFloatGeneric.ConvertFullFeaturedBTSToDouble(this.fullTernaryValue);
+                //Console.WriteLine("Verify the double is the same converting back: " + this.doubleValue + "\n\n");
+            }
+
+            else if (doubleValue == 0)
+
+            {
+                SetUpTypeTrits();
+
+                this.signSubnormal = "0";
+
+                this.fullTernaryValue = this.type + this.signSubnormal;
+                for (int n = 0; n < nSignificandTrits + nExponentTrits; n++)
+                {
+                    this.fullTernaryValue += "0";
+                }
+
+                base.fullTernaryString = fullTernaryValue;
+            }
+            else
+            {
+                Console.WriteLine("Your value was out of range for this implementation.\n");
+            }
+
+            void SetUpTypeTrits()
+            {
+                if (nTypeTrits > 0)
+                {
+                    this.type = TernaryIntGeneric.ConvertTypeCodeToTernaryString((TernaryIntGeneric.TypeCodeEnum)TypeCodeEnum.RealNumberInfinitePrecision, nTypeTrits);
+                }
+                else
+                {
+                    this.type = "";
+                }
+            }
+        }
+
+        public void ChangeValue(string significand, string exponent, string sign = null, string typeCode = null)
+        {
+            this.significand = significand;
+            this.exponent = exponent;
+            this.signSubnormal = sign;
+            if (this.signSubnormal == null) { this.signSubnormal = ""; }
+            this.type = typeCode;
+            if (type == null) { this.Type = ""; }
+            this.fullTernaryValue = this.type + this.signSubnormal + this.exponent + this.significand;
+
+            base.fullTernaryString = fullTernaryValue;
+
+            this.doubleValue = TernaryFloatGeneric.ConvertFullFeaturedBTSToDouble(this.fullTernaryValue);
+        }
+
         public TernaryFloatGeneric(string significand, string exponent, string sign = null, TypeCodeEnum? typeCodeEnum = TypeCodeEnum.RealNumberInfinitePrecision)
         {
             this.significand = significand;
             this.exponent = exponent;
             this.signSubnormal = sign;
-            if (signSubnormal == null) { this.signSubnormal = ""; }
+            if (this.signSubnormal == null) { this.signSubnormal = ""; }
             this.type = TernaryIntGeneric.ConvertTypeCodeToTernaryString((TernaryIntGeneric.TypeCodeEnum)typeCodeEnum, nTypeTrits);
             this.fullTernaryValue = this.type + this.signSubnormal + this.exponent + this.significand;
+
+            base.fullTernaryString = fullTernaryValue;
+
             this.doubleValue = TernaryFloatGeneric.ConvertFullFeaturedBTSToDouble(this.fullTernaryValue);
+        }
+
+        public override void Invert()
+        {
+            base.Invert();
+            if (signSubnormal == "0")
+            {
+                significand = TernaryIntGeneric.InvertBalancedTernaryString(significand);
+                exponent = TernaryIntGeneric.InvertBalancedTernaryString(exponent);
+            }
+            else if (signSubnormal == "+" || signSubnormal == "-")
+            {
+                signSubnormal = TernaryIntGeneric.InvertBalancedTernaryString(SignSubnormal);
+                significand = TernaryIntGeneric.InvertBalancedTernaryString(significand);
+            }
         }
 
         public static double CalculateMaxNormalizedSignificand( int nTrits, int startTrit = 0 )
@@ -223,6 +379,8 @@ namespace ActionTernarySimulator
             {
                 TernaryFloatGeneric.minSubnormalPosValue = Math.Pow(3.0, -(nSignificandTrits + nExponentTrits)) * Math.Pow(3.0, -(Math.Pow(3.0, nExponentTrits) - 1) / 2);
             }
+            TernaryFloatGeneric.maxExponentValue = (int)(Math.Pow(3, TernaryFloatGeneric.nExponentTrits) - 1) / 2;
+            TernaryFloatGeneric.minExponentValue = -maxExponentValue;
         }
 
         public static void SetUpTernaryImplementation(int totalNTrits, double desiredPrecision = 10e-10, int desiredOrderOfMagnitude = 10, int desiredNumberOfFlags = 9, bool extendedSignificand = true)

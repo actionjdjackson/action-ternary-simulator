@@ -2,7 +2,7 @@
 
 namespace ActionTernarySimulator
 {
-    public class TernaryIntGeneric
+    public class TernaryIntGeneric : TernaryNumGeneric
     {
 
         public enum TypeCodeEnum
@@ -33,17 +33,27 @@ namespace ActionTernarySimulator
         public TernaryIntGeneric(Int64 integerValue)
         {
             this.integerValue = integerValue;
-            this.integerPartTernaryValue = ConvertIntToBalancedTernaryString(this.integerValue);
+            this.integerPartTernaryValue = ConvertIntToBalancedTernaryString(this.integerValue, nIntegerTrits);
             this.typeCodeTernary = ConvertTypeCodeToTernaryString(typeCode, nTypeTrits);
             this.fullTernaryValue = typeCodeTernary + integerPartTernaryValue;
+            base.fullTernaryString = fullTernaryValue;
         }
 
         public TernaryIntGeneric(string ternaryString)
         {
             this.integerPartTernaryValue = ternaryString;
+            if (integerPartTernaryValue.Length < nIntegerTrits)
+            {
+                var len = integerPartTernaryValue.Length;
+                for (int i = len; i < nIntegerTrits; i++)
+                {
+                    integerPartTernaryValue = "0" + integerPartTernaryValue;
+                }
+            }
             this.integerValue = ConvertBalancedTernaryStringToInt(this.integerPartTernaryValue);
             this.typeCodeTernary = ConvertTypeCodeToTernaryString(typeCode, nTypeTrits);
             this.fullTernaryValue = typeCodeTernary + integerPartTernaryValue;
+            base.fullTernaryString = fullTernaryValue;
         }
 
         public static void SetUpTernaryImplementation(int totalNTrits, int nTypeTrits)
@@ -53,10 +63,44 @@ namespace ActionTernarySimulator
             TernaryIntGeneric.NIntegerTrits = totalNTrits - nTypeTrits;
         }
 
-        public void Invert()
+        public override void ChangeValue()
+        {
+            base.ChangeValue();
+            ChangeValue(fullTernaryString);
+        }
+
+        public void ChangeValue(Int64 integerValue)
+        {
+            this.integerValue = integerValue;
+            this.integerPartTernaryValue = ConvertIntToBalancedTernaryString(this.integerValue, nIntegerTrits);
+            this.typeCodeTernary = ConvertTypeCodeToTernaryString(typeCode, nTypeTrits);
+            this.fullTernaryValue = typeCodeTernary + integerPartTernaryValue;
+            base.fullTernaryString = fullTernaryValue;
+        }
+
+        public void ChangeValue(string ternaryString)
+        {
+            this.integerPartTernaryValue = ternaryString;
+            if (integerPartTernaryValue.Length < nIntegerTrits)
+            {
+                var len = integerPartTernaryValue.Length;
+                for (int i = len; i < nIntegerTrits; i++)
+                {
+                    integerPartTernaryValue = "0" + integerPartTernaryValue;
+                }
+            }
+            this.integerValue = ConvertBalancedTernaryStringToInt(this.integerPartTernaryValue);
+            this.typeCodeTernary = ConvertTypeCodeToTernaryString(typeCode, nTypeTrits);
+            this.fullTernaryValue = typeCodeTernary + integerPartTernaryValue;
+            base.fullTernaryString = fullTernaryValue;
+        }
+
+        public override void Invert()
         {
             this.integerPartTernaryValue = InvertBalancedTernaryString(this.integerPartTernaryValue);
             this.integerValue = -this.integerValue;
+            this.fullTernaryValue = typeCodeTernary + integerPartTernaryValue;
+            base.fullTernaryString = fullTernaryValue;
         }
 
         public static string InvertBalancedTernaryString(string ternaryString)
@@ -110,7 +154,7 @@ namespace ActionTernarySimulator
             return sum;
         }
 
-        public static string ConvertIntToBalancedTernaryString(Int64 integerValue)
+        public static string ConvertIntToBalancedTernaryString(Int64 integerValue, int nTrits)
         {
             var workValue = integerValue;
             var workString = "";
@@ -139,10 +183,10 @@ namespace ActionTernarySimulator
             {
                 workString = "0";
             }
-            if (workString.Length < nIntegerTrits)
+            if (workString.Length < nTrits)
             {
                 var len = workString.Length;
-                for (int i = 0; i < nIntegerTrits - len; i++)
+                for (int i = len; i < nTrits; i++)
                 {
                     workString = "0" + workString;
                 }
@@ -150,6 +194,8 @@ namespace ActionTernarySimulator
 
             return workString;
         }
+
+
 
         public static string ConvertTypeCodeToTernaryString(TypeCodeEnum? typeCode, int nTrits)
         {
