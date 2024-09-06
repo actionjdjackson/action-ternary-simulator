@@ -1,7 +1,7 @@
 ## Action Ternary Simulator ##
 Working on a Ternary Computer Simulation using strings of ```0, -, +``` characters as data and instructions.
 Currently can process addition, subtraction, multiplication, division, x to the power of y, absolute value, negative absolute value, and ternary comparisons on ternary integers of the class ```TernaryIntGeneric```.
-I don't simply let the computer do the math in binary and then translate to ternary, instead, I focus on changing the values of the character strings directly to do the operations I described.
+I don't simply let the computer do the math in binary and then translate to ternary, instead, I focus on changing the values of the character strings directly to do the operations I described. I also currently have floating point addition and subtraction working using the class ```TernaryFloatGeneric```. Also working on a simple assembly language. The simulator runs on a .trom file with instruction codes and data register values in pairs.
 
 ### X-Trit Floating Point Standard ###
 Also combines a generic Ternary Floating Point number system with a class called ```TernaryFloatGeneric```, with which you can specify the maximum number of trits, the precision, and the magnitude 
