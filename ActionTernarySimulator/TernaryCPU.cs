@@ -528,7 +528,7 @@ namespace ActionTernarySimulator
                     freg2.ChangeValue(this.iosys.IORead(datareg as TernaryIntGeneric).FullTernaryString);
                     break;
 
-                case -9300: //character operations
+                case -9300: //character read/write operations
                     this.iosys.IOTtyWrite(new TernaryChar(reg1.FullTernaryString));
                     break;
                 case -9299:
