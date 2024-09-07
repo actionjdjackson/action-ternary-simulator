@@ -10,3 +10,8 @@ standard is based on "Ternary27 A Balanced Ternary Floating Point Format Version
 subnormal number is being represented and more precision is granted based on the size of the exponent part of the floating point number, which is assumed to be at its least possible value (-121 in 
 the case of a 27-trit ternary float with 5 trits for the exponent) and the extra trits from the exponent are used for precision. This is recommended and is the default behavior. The flags are specified by how many different flag values you want to be represented in the float, which is 6 in the case of the Ternary27 implementation - with 3 extras that have not been defined - because two trits are used for the type code/flags. 
 The numerical accuracy is limited to the `double`'s level of precision (a 64-bit FLoat).
+
+#### License ####
+Action Ternary Simulator is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Action Ternary Simulator is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details, at http://www.gnu.org/licenses/
