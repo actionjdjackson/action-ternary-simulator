@@ -34,7 +34,7 @@ namespace ActionTernarySimulator
                 var status = new TernaryIntGeneric(0);
                 var startTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 var clcnt = 1;
-                var targspeed = 6.5; //approx. speed in KHz
+                var targspeed = 10; //approx. speed in KHz
                 var targtime = 1 / (targspeed);
 
                 while (status.integerValue == 0)
@@ -49,7 +49,7 @@ namespace ActionTernarySimulator
                 }
                 Console.WriteLine("TernaryCPU Stopped With Status Code: " + status.integerValue);
 
-                Console.WriteLine($"Approx. Speed: {(float)(clcnt) / (DateTimeOffset.Now.ToUnixTimeMilliseconds() - startTime)}" + " KHz");
+                Console.WriteLine($"Approx. Speed: {(float)(clcnt) / (DateTimeOffset.Now.ToUnixTimeMilliseconds() - startTime)}" + " KHz, Target " + targspeed + " KHz");
 
                 //Console.WriteLine(TernaryCPU.AddTernaryFloats(new TernaryFloatGeneric(-0.75), new TernaryFloatGeneric(-0.25)).DoubleValue);
                 //Console.WriteLine(TernaryCPU.AddTernaryFloats(new TernaryFloatGeneric(3.75), new TernaryFloatGeneric(1.25)).DoubleValue);
